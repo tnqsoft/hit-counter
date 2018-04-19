@@ -32,14 +32,15 @@ class HitCounter {
         $lang = Utility::getLang();
 
         $sql = "
-            SELECT COUNT(1)
+            SELECT *
             FROM visitors
             WHERE session_id = '{$sessionId}'
             AND ip = '{$ip}'
             AND last_visit >= UNIX_TIMESTAMP() - ".static::SESSION_TIMEOUT_IN_MINUTE."*60";
-        $check = $this->dbAccess->scalarBySQL($sql);
+        $data = $this->dbAccess->findOneBySql($sql);
 
-        if ($check == 0) {
+        if ($data === null) {
+            // Add new sesssion visit
             $this->dbAccess->save('visitors', array(
                 'session_id' => $sessionId,
                 'ip' => $ip,
@@ -49,6 +50,12 @@ class HitCounter {
                 'language' => $lang,
                 'created_at' => 'NOW()',
             ));
+        } else {
+            // Update time visit
+            $this->dbAccess->save('visitors', array(
+                'id' => $data->id,
+                'last_visit' => time(),
+            ), 'id');
         }
     }
 
