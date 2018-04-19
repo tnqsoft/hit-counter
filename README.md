@@ -1,6 +1,10 @@
 # hit-counter
 PHP Hit Counter
 
+## Install
+- Restore Database
+- Change database config in classes/HitCounter/HitCounter.php
+
 ## Demo 
 - http://demo.tnqsoft.com/hitcounter/
 
